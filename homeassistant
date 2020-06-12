@@ -27,12 +27,12 @@
 . /etc/rc.subr
 
 name="homeassistant"
-rcvar=${name}_enable
+rcvar="${name}_enable"
 
-start_precmd=${name}_precmd
-restart_precmd=${name}_checkconfig
-configtest_cmd=${name}_checkconfig
-stop_postcmd=${name}_postcmd
+start_precmd="${name}_precmd"
+restart_precmd="${name}_checkconfig"
+configtest_cmd="${name}_checkconfig"
+stop_postcmd="${name}_postcmd"
 command="/usr/sbin/daemon"
 pidfile_child="/var/run/${name}.pid"
 pidfile="/var/run/${name}_daemon.pid"
