@@ -48,7 +48,8 @@ load_rc_config ${name}
 homeassistant_checkconfig()
 {
     echo "Performing check on Home Assistant configuration:"
-    eval "${homeassistant_install_dir}/bin/hass" --config "${homeassistant_config_dir}" --script check_config
+    checkcmd="${homeassistant_install_dir}/bin/hass --config \"${homeassistant_config_dir}\" --script check_config"
+    su "${homeassistant_user}" -c "$checkcmd"
 }
 
 homeassistant_precmd()
