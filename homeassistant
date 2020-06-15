@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 # Based upon work by tprelog at https://www.ixsystems.com/community/resources/fn-11-2-iocage-home-assistant-jail-plugins-for-node-red-mosquitto-amazon-dash-tasmoadmin.102/
+# and the guide at https://community.home-assistant.io/t/installation-of-home-assistant-on-your-freenas/195158
 #
 # PROVIDE: homeassistant
 # REQUIRE: LOGIN
@@ -36,6 +37,7 @@ stop_postcmd="${name}_postcmd"
 command="/usr/sbin/daemon"
 pidfile_child="/var/run/${name}.pid"
 pidfile="/var/run/${name}_daemon.pid"
+logfile="/var/log/${name}.log"
 extra_commands="configtest"
 
 load_rc_config ${name}
@@ -54,19 +56,16 @@ homeassistant_checkconfig()
 
 homeassistant_precmd()
 {
-    rc_flags="-f -P ${pidfile} -p ${pidfile_child} ${homeassistant_install_dir}/bin/hass --config ${homeassistant_config_dir} ${rc_flags}"
+    rc_flags="-f -o ${logfile} -P ${pidfile} -p ${pidfile_child} ${homeassistant_install_dir}/bin/hass --config ${homeassistant_config_dir} ${rc_flags}"
 
-    if [ ! -e "${pidfile_child}" ]; then
-            install -g ${homeassistant_group} -o ${homeassistant_user} -- /dev/null "${pidfile_child}";
-    fi
+    [ ! -e "${pidfile_child}" ] && install -g ${homeassistant_group} -o ${homeassistant_user} -- /dev/null "${pidfile_child}"
 
-    if [ ! -e "${pidfile}" ]; then
-            install -g ${homeassistant_group} -o ${homeassistant_user} -- /dev/null "${pidfile}";
-    fi
+    [ ! -e "${pidfile}" ] && install -g ${homeassistant_group} -o ${homeassistant_user} -- /dev/null "${pidfile}"
 
-    if [ ! -d "${homeassistant_config_dir}" ]; then
-            install -d -g ${homeassistant_group} -o ${homeassistant_user} -- "${homeassistant_config_dir}";
-    fi
+    [ -e "${logfile}" ] && rm -f -- "${logfile}"
+    install -g ${homeassistant_group} -o ${homeassistant_user} -- /dev/null "${logfile}"
+
+    [ ! -d "${homeassistant_config_dir}" ] && install -d -g ${homeassistant_group} -o ${homeassistant_user} -- "${homeassistant_config_dir}"
 
     homeassistant_checkconfig
 }
