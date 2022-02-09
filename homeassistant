@@ -50,13 +50,13 @@ load_rc_config ${name}
 homeassistant_checkconfig()
 {
     echo "Performing check on Home Assistant configuration:"
-    checkcmd="${homeassistant_install_dir}/bin/hass --config \"${homeassistant_config_dir}\" --script check_config"
+    checkcmd="${homeassistant_install_dir}/bin/hass --ignore-os-check --config \"${homeassistant_config_dir}\" --script check_config"
     su "${homeassistant_user}" -c "$checkcmd"
 }
 
 homeassistant_precmd()
 {
-    rc_flags="-f -o ${logfile} -P ${pidfile} -p ${pidfile_child} ${homeassistant_install_dir}/bin/hass --config ${homeassistant_config_dir} ${rc_flags}"
+    rc_flags="-f -o ${logfile} -P ${pidfile} -p ${pidfile_child} ${homeassistant_install_dir}/bin/hass --ignore-os-check --config ${homeassistant_config_dir} ${rc_flags}"
 
     [ ! -e "${pidfile_child}" ] && install -g ${homeassistant_group} -o ${homeassistant_user} -- /dev/null "${pidfile_child}"
 
